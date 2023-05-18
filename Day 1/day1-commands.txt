@@ -1,0 +1,81 @@
+Hypervisor - tool 
+	- Type 1
+		- bare matel HV
+		- sits/installs directly on top of hardware
+		- ex:
+			- VMware ESXi, Citrix Xen server, Microsoft Hyper-V
+	- Type 2
+		- guest/OS-based HV
+		- requires an OS to run
+		- ex:
+			- Oracle virtual box, VMWare workstation, KVM, Microsoft Hyper-V
+
+Docker Images - read only, template, blueprint
+Docker Container - contains the application, env..
+
+#################################################################################
+old
+-----------------------------------
+1. touch demo.txt
+2. apt update -y 
+3. apt install vim -y
+4. echo "deployment done"
+
+updated
+-----------------------------------
+1. touch demo.txt
+2. apt upgrade -y && apt update -y 
+3. apt install tmux -y
+4. echo "deployment done"
+#################################################################################
+
+Network sandbox
+- isolated sandbox that holds the n/w configs in containers
+
+Endpoints
+- est. connectivity for diff container services
+
+Docker engine
+- installed on host machine
+
+network driver
+- manage network
+
+IPAM driver
+- managing IP addresses with docker network
+
+network infra
+
+
+1. Install docker commands: (run as root user)
+-----------------------------
+yum install -y yum-utils
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum repolist
+yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+which docker
+
+2. verify if docker is running, else start it.
+-----------------------------
+systemctl status docker
+systemctl start docker
+systemctl enable docker
+systemctl status docker
+
+3. verify docker image & container status
+-----------------------------
+docker info
+
+4. checking images
+-----------------------------
+[root@docmaster ~]# #list images
+[root@docmaster ~]# docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+[root@docmaster ~]# docker image ls
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+
+5. downloading the image(s)
+-----------------------------
+# docker pull ubuntu			//this downloads latest ubuntu version
+# docker pull ubuntu:18.04		//this downloads specific ubuntu version
+

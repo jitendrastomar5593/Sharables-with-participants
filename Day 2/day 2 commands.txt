@@ -1,0 +1,70 @@
+Docker Networking:
+------------------
+
+list n/w
+# docker network ls
+
+
+create docker n/w
+# docker network create <my-dnet>
+
+create docker custom n/w
+# docker network create --driver=bridge --subnet=10.10.0.0/16  my-dnet2
+
+create a new container with this new network
+# docker run --network=my-dnet2 --name=mycontainer4 -it ubuntu /bin/bash
+
+Verify
+# docker inspect mycontainer4
+
+to connect with 2 container
+1. create a new container
+	# docker run --name=mycon1 -d nginx
+	
+2. get the container ID
+	#docker ps
+	
+3. get the ip address of this nginx container
+	#docker inspect  110905a80799 | grep -i ipaddress
+	
+4. run another (busybox) container
+	# docker run -it busybox sh
+	
+5. get the NGINX web page
+	/ > wget -q -O - 172.17.0.2
+	
+Docker volumes:
+----------------
+1. list default volumes
+	# docker volume ls
+	
+2. create a new volume
+	# docker volume  create my-vol1
+	
+3. list default volumes
+	# docker volume ls
+	
+
+Docker compose
+---------------
+- a tool that allows multi-container docker application.
+- docker compose works in all the env:
+	- prod
+	- stag
+	- dev
+	- testing
+- to install docker-compose
+# curl -SL https://github.com/docker/compose/releases/download/v2.18.0/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+
+check the permissions:
+# ls -l /usr/local/bin/docker-compose
+
+give the executable permissions
+# chmod +x /usr/local/bin/docker-compose
+
+check the permissions again:
+# ls -l /usr/local/bin/docker-compose
+
+verify the docker-compose version
+# docker-compose version
+
