@@ -1,0 +1,67 @@
+Master Node
+~~~~~~~~~~~~
+	1. API Server
+		- allows users & other components to interact with the cluster.
+		- like a gate keeper.
+		- API Server will validate the config creds.
+		- if the validation is correct, then it saves the data in the ETCD store.
+	2. ETCD
+		- its like a database (key:value pair)
+		- its a persistent db.
+		- it stores 
+			- cluster configuration
+			- Application configuration
+			- Secrets & sensitive data
+				- password, certificates
+	3. Controller Manager
+		- it is called as "contoller of controllers".
+		- it manages:
+			- Node controller
+			- Replication controller
+			- Endpoints contoller
+			- Service & token controller
+		- it manages/ensures that the specific no. of container(s)  are running as described in the config (YAML) file.
+	4. Scheduler
+		- it is responsible for scheduling (placing) a container into a healthy worker node.
+
+
+
+
+
+Worker Node (minion node) - these will run the containers.
+~~~~~~~~~~~~
+	1. kubelet
+		- responsible for managing the containers on the node.
+		- it interacts withe API Server to receive the instruction for creating, starting, stopping or monitoring continer.
+	2. Container runtime (Docker / Containerd)
+		- its a software that runs the container. 
+		- Ex:- Docker, Containerd
+	3. Kube-proxy
+		- responsible for managing networking & load balancing.
+		- it also manages the n/w connectivity & routing between services & containers.
+
+
+
+Virtualization		--> virtual machine
+Containerization	--> Docker container
+Kubernetes				--> Pods 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

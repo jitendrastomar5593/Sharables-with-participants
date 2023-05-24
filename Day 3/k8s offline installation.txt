@@ -1,0 +1,67 @@
+turn off selinux, firewalld
+
+master node should have static IP.
+
+update ur repos (master, workers)
+	# apt-get update -y
+
+turn off/disable SWAP (master, workers)  -- IMPORTANT STEP
+	root@kmaster:~# swapoff -a
+	root@kmaster:~# vim /etc/fstab
+
+install openssh  (master, workers)
+	# apt-get install -y openssh-server
+	# apt-get update -y
+
+adding the kube repo
+	# apt-get install -y apt-transport-https curl
+	# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+	# cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
+	> deb http://apt.kubernetes.io kubernetes-xenial main
+	> EOF
+	# apt-get update -y
+
+install docker, kubelet, kubectl, kubeadm  (master, workers)
+1. set up docker
+##############################################################################################
+1. sudo apt-get update -y
+2. sudo apt-get install ca-certificates curl gnupg -y
+3. sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+4. echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+5. sudo apt-get update -y
+6. sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+##############################################################################################
+
+install kube commands:
+# apt-get install -y kubelet kubectl kubeadm
+
+edit the config file:
+# vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+	& add this to the bottom of the file
+		Environment="cgroup-drive=systemd/cgroup-driver=cgroupfs"
+	:wq!
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On master node:
+-----------------------
+# kubeadm init
+
+   40  mkdir -p $HOME/.kube
+   41  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   42  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   43  kubectl get nodes
+   44  kubectl get pods -o wide --all-namespace
+   45  kubectl get pods -o wide --all-namespaces
+   46  kubectl get nodes
+   47  kubectl get pods -o wide --all-namespaces
+   48  history  > kube-install-master.txt
+
+join the cluster  (workers)
+# kubeadm join 192.168.88.128:6443 --token 85yi35.nw2yti1uvsezqt3p \
+	--discovery-token-ca-cert-hash sha256:5cba15cef79dfef9b2427c3cae38d485a75b58875a6d6c76be4643e38fbc48c3
+

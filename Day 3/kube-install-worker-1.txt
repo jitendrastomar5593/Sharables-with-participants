@@ -1,0 +1,36 @@
+    1  clear
+    2  init 0
+    3  apt install -y vim
+    4  vim /etc/hostname 
+    5  hostnamectl set-hostname knode01
+    6  ip a | grep inet
+    7  vim /etc/hosts
+    8  swapoff -a
+    9  vim /etc/fstab 
+   10  mount -a
+   11  ip a
+   12  apt-get install -y openssh-server && apt-get update -y
+   13  ping google.com
+   14  ip a | grep inet
+   15  apt-get install -y openssh-server && apt-get update -y
+   16  apt-get install -y apt-transport-https curl
+   17  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+   18  cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io kubernetes-xenial main
+EOF
+
+   19  apt-get update -y
+   20  apt-get install ca-certificates curl gnupg -y
+   21  install -m 0755 -d /etc/apt/keyrings
+   22  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   23  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+   24  echo   "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   25  apt-get update -y
+   26  apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+   27  apt-get install -y kubelet kubectl kubeadm
+   28  vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+   29  kubeadm join 192.168.88.128:6443 --token 85yi35.nw2yti1uvsezqt3p 	--discovery-token-ca-cert-hash sha256:5cba15cef79dfef9b2427c3cae38d485a75b58875a6d6c76be4643e38fbc48c3
+   30  rm /etc/containerd/config.toml; systemctl restart containerd
+   31  kubeadm join 192.168.88.128:6443 --token 85yi35.nw2yti1uvsezqt3p 	--discovery-token-ca-cert-hash sha256:5cba15cef79dfef9b2427c3cae38d485a75b58875a6d6c76be4643e38fbc48c3
+   32  history  > kube-install-worker-1.txt

@@ -1,0 +1,18 @@
+this happens on MASTER node
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. pod created --> pending state --> depolyment is accepted, but hasn't scheduled on any node.
+2. "schedular" will check for the resources (CPU, Mem) & then it will be pushed to that worker node.
+
+this happens on WORKER node
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3. pod status changes from PENDING to CREATING
+4. in this state, image will be checked (locally), else it will download the image from DockerHub.
+5. once, image is pulled, container state changed from CREATING to RUNNING.
+6. if it fails due to any reason, the state will change to FAILED.
+7. RUNNING state means that the application is deployed.
+8. if the container fails, K8 will restart the container/pod.
+9. if the crash happens freq, then state changes to "CRASHLOOP BACK OFF"
+10. then pod tries to HEAL itself. if success -> OK, else - TS manually.
+		#kubectl get pods
+		#kubectl describe pod <podname>
+		#check logs
