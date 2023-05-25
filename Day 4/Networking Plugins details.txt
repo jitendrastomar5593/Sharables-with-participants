@@ -1,0 +1,73 @@
+Link: https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+There are several networking plugins available for Kubernetes. 
+Here is a comprehensive list of networking plugins commonly used in Kubernetes:
+
+	• Flannel
+	• Calico
+	• Weave (https://www.weave.works/docs/net/latest/kubernetes/kube-addon/)
+	• Cilium
+	• Antrea
+	• Canal (Combination of Calico and Flannel)
+	• kube-router
+	• Romana
+	• Kube-OVN
+	• Contiv
+	• Project Calico with BGP
+	• kube-iptables-tailer
+	• Multus CNI
+	• SR-IOV
+	• Macvlan
+	• IPvlan
+	• OpenContrail
+	• Gobetween
+	• Nuage Networks
+	• Kuryr
+	• NSX-T
+	• Azure CNI
+	• AWS VPC CNI
+	• GKE VPC Network Peering
+	• CNI-Genie
+	• Weave Net Multicast
+	• kube-bridge
+
+
+Flannel:
+	• Flannel is a simple and lightweight network fabric designed for Kubernetes.
+	• It uses the VXLAN overlay network to create a virtual network connecting nodes.
+	• Flannel assigns a subnet to each node and ensures that containers on different nodes can communicate with each other.
+	• It is easy to set up and widely used in Kubernetes clusters.
+	• Suitable for small to medium-sized clusters and provides good performance.
+	• GitHub repository: coreos/flannel
+
+Calico:
+	• Calico provides network policy enforcement and secure network connectivity for Kubernetes.
+	• It uses standard Linux networking components such as BGP routing and iptables to enforce policies and route traffic.
+	• Calico can scale to large clusters and supports advanced networking features.
+	• It offers network segmentation and isolation, allowing fine-grained control over network traffic between pods and nodes.
+	• Suitable for large-scale deployments and environments that require strong network policies.
+	• GitHub repository: projectcalico/calico
+
+Weave:
+	• Weave provides a simple and flexible network overlay for Kubernetes.
+	• It creates a virtual network that connects pods across different hosts using VXLAN or UDP tunnels.
+	• Weave enables direct communication between pods without requiring external load balancers.
+	• It includes features like network encryption, DNS-based service discovery, and network segmentation.
+	• Suitable for small to medium-sized clusters and environments that require easy setup and flexible networking options.
+	• GitHub repository: weaveworks/weave
+
+Cilium:
+	• Cilium is a networking and security plugin that provides API-aware network and security enforcement for Kubernetes.
+	• It uses eBPF (extended Berkeley Packet Filter) technology to enable fast packet processing and fine-grained control.
+	• Cilium offers observability, load balancing, network security policies, and transparent encryption.
+	• It is suitable for large-scale deployments and environments that require advanced security and observability features.
+	• GitHub repository: cilium/cilium
+
+Antrea:
+	• Antrea is a Kubernetes networking plugin specifically designed for Kubernetes native networking.
+	• It uses Open vSwitch (OVS) as the data plane and supports Kubernetes Network Policy enforcement.
+	• Antrea leverages the OVS hardware acceleration capabilities for improved performance.
+	• It provides basic networking and security features while focusing on simplicity and ease of use.
+	• Suitable for small to medium-sized clusters and environments that prioritize simplicity and Kubernetes-native features.
+	• GitHub repository: vmware-tanzu/antrea
+
