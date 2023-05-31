@@ -1,0 +1,171 @@
+list all k8s resources
+# kubectl get all
+
+list all k8s resources in a specific namespace
+# kubectl get all -n <namespace>
+
+list detailed for a pod
+# kubectl describe nginx-file-pod
+# kubectl describe pod nginx-file-pod
+
+edit the running pod
+# kubectl edit pod nginx-file-pod
+
+example of replicaset:
+------------------
+cat replica1.yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-replicaset
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: nginx:1.16
+        ports:
+        - containerPort: 8080
+------------------
+# kubectl get all
+# kubectl apply -f replica1.yaml 
+
+list pods
+# kubectl get pods
+
+deleting a pod (my-replicaset-4w82s)
+# kubectl delete pod my-replicaset-4w82s
+
+validating
+# kubectl get pods
+
+editing running replicaset
+# kubectl edit replicaset my-replicaset
+
+Scaling replicaset
+# kubectl scale replicaset my-replicaset --replicas=2
+# kubectl get pods
+
+Scaling replicaset to 7 pods
+# kubectl scale replicaset my-replicaset --replicas=7
+
+validating pods
+# kubectl get pods
+# kubectl get pods -o wide
+
+listing details of RS
+# kubectl get rs 
+# kubectl get rs -o wide
+
+reducing pods
+# kubectl scale replicaset my-replicaset --replicas=2
+
+deleting pods under this replicaset
+# kubectl delete pods my-replicaset-8ppvr my-replicaset-j7xtd
+# kubectl get all
+# kubectl scale replicaset my-replicaset --replicas=1
+# kubectl get all
+
+listing details RS
+# kubectl describe rs my-replicaset
+
+deleting the RS
+# kubectl delete rs my-replicaset --force
+# kubectl get all
+
+listing all namespaces
+# kubectl get namespaces
+
+creating a new namespace using command:
+# kubectl create namespace dev
+# kubectl get namespaces
+
+creating a new namespace using config file:
+---------------------
+cat namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: your-namespace-name
+---------------------
+
+applying the config:
+# kubectl apply -f namespace.yaml 
+# kubectl get namespaces
+
+running a new pod using nginx image in a namespace in invalid NS
+# kubectl run nginx --image=nginx:1.16 --namespace=dev1
+
+running a new pod using nginx image in a namespace in Namespace
+# kubectl run nginx --image=nginx:1.16 --namespace=dev
+
+listing details in default Namespace
+# kubectl get pods
+
+listing details in DEV Namespace
+# kubectl get pods -n dev
+
+listing details in production Namespace
+# kubectl get pods -n production
+
+creating details in production Namespace
+# kubectl run nginx --image=nginx:1.17 --namespace=production
+# kubectl get pods -n production
+
+deleting deployment forcfully
+# kubectl delete deployment nginx-app --force
+
+deleting deployment forcfully in dev NS
+# kubectl delete deployment nginx-app --force -n dev
+
+deleting services forcfully
+# kubectl delete service nginx-service --force
+
+listing all resources in dev/default Namespace
+# kubectl get all -n dev
+# kubectl get all -n default
+
+listing the default namespace
+# kubectl config view | grep -i namespace
+
+changing the namespace to "dev"
+# kubectl config set-context --current --namespace=dev
+# kubectl config view | grep -i namespace
+# kubectl config view 
+
+checking the etcdctl version
+# etcdctl version
+
+copy & paste below cmd to install etcdctl
+# ETCD_VER=v3.4.26
+################## COPY FROM HERE ##########################
+GOOGLE_URL=https://storage.googleapis.com/etcd
+GITHUB_URL=https://github.com/etcd-io/etcd/releases/download
+DOWNLOAD_URL=${GOOGLE_URL}
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+rm -rf /tmp/etcd-download-test && mkdir -p /tmp/etcd-download-test
+curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+/tmp/etcd-download-test/etcd --version
+/tmp/etcd-download-test/etcdctl version
+mv /tmp/etcd-download-test/etcdctl /usr/bin/
+etcdctl version
+ETCD_VER=v3.4.26
+# choose either URL
+GOOGLE_URL=https://storage.googleapis.com/etcd
+GITHUB_URL=https://github.com/etcd-io/etcd/releases/download
+DOWNLOAD_URL=${GOOGLE_URL}
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+rm -rf /tmp/etcd-download-test && mkdir -p /tmp/etcd-download-test
+curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+
+# mv /tmp/etcd-download-test/etcdctl /usr/bin
+##################### TILL HERE ############################

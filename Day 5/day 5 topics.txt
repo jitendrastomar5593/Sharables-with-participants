@@ -1,0 +1,177 @@
+Day 5
+---------
+
+
+ReplicaSet
+-------------
+	- RS is a resource objt that ensures the specific no. of pod replicas are running & maintained within a cluster.
+	
+	- RS is one of the core controllers, that helps in increasing or decreasing the no. of pods.
+	
+Features:
+	1. Specifying the POD template
+		container, image, env variable, ports...
+	2. Specifying the replica count
+		spec --> replica:<COUNT>
+	3. Selector
+		rs uses label to idfy the sets of pods to manage.
+	4. Scalability
+		increasing / decreasing the no. of pods.
+		
+Note: default RS value: 1
+
+ReplicaSet ==> NEW
+Replication Controller  ==> OLD
+
+Replication loop -> diagram
+
+
+Namespaces
+-------------
+- is a way of partitioning the entire k8s cluster into multiple virtual partitions
+- you can partition ur env into:
+	- application teams
+	- Env
+		- prod, test, qa, dev
+	- teams
+	
+- default namespaces in k8s cluster
+	1. default namespace
+		- this is the default, if you don't specify the NS, then the resource will be created in the default namespace.
+	2. kube-system
+		- reserved for system components like
+			kube-proxy, kube-dns, dashboard
+	3. kube-public
+		- is acc. by all users, it is exposed to all users.
+	4. kube-node-lease
+		- this ns is used for lease objects associated with each node.
+		- this helps in determining the availability of the nodes.
+		
+to list all namespaces
+	# kubectl get namespaces
+	
+to create a new namespace (dev)
+	# kubectl create namespace <dev>
+	
+	
+Upgrading the k8s using kubeadm commands
+############################################
+old verion --> new version
+
+K8s
+	1. Managed service
+		- offered by GKE, AKS, EKS
+		- service provider will take the responsiblity of updates & upgrades
+	2. Self service
+		- kubeadm
+		- we need to take care of upgrades.
+		
+current version: v1.25.0
+latest  version: v1.27.0
+--------------------------
+v1.25 --> v1.26  --> v1.27
+--------------------------
+
+approach to upgrade the version:
+	1> control-plane / master first (one-master-node at a time)
+	2> then upgrade worker nodes
+	
+Go to control-plane / master
+-----------------------------
+	1. upgrade kubeadm
+		# apt-get update -y
+		# apt-get upgrade kubeadm -y
+		# kubeadm version
+		# kubectl drain <master> --ignore-daemonsets
+		
+	2. upgrade kubernetes
+		1. perform a "plan".
+			# kubeadm upgrade plan
+			
+		2. you need to "apply" the plan.
+			# kubeadm upgrade apply v1.26.0
+			
+	3. upgrade kubelet & kubectl version
+		# apt-get install -y kubectl-v1.26.0 kubelet-v1.26.0
+		# systemctl restart kubelet			//RESTART the kubelet service
+		
+		remove the master from the maintainance mode
+			# kubectl uncordon <master>
+		
+		
+Go to worker(s) - One by one
+-----------------------------
+	1. upgrade the kubeadm
+		# apt-get install kubeadm-v1.26.0 --disableexcludes=kubernetes -y
+		# kubeadm version
+		
+	2. drain the node
+		# kubectl drain <worker-1> --ignore-daemonsets
+
+	3. upgrade kubelet & kubectl
+		# apt-get install -y kubectl-v1.26.0 kubelet-v1.26.0 --disableexcludes=kubernetes
+		
+	4. remove the master from the maintainance mode
+		# kubectl uncordon <worker-1>
+		
+ETCD backup & restore:
+##########################
+- its the most imp component in the K8s cluster.
+- its a key-pair DB:
+	- current set of pods
+	- deployments
+	- replicasets
+	- configMaps
+	- Jobs
+	- any/all config are stored here.
+	
+K8s
+	1. Managed service
+		- offered by GKE, AKS, EKS
+		- service provider will take the responsiblity of backups
+	2. Self service
+		- kubeadm
+		- we need to take care of backups.
+		
+Why backups?
+	1. when there is a disaster.
+	2. when you want to replicate the entire env.
+	3. when you want to migrate.
+	
+to take the backup & restore you need: etcdctl
+
+this etcdctl helps you in:
+	- add new entries
+	- delete old entries
+	- take snapshots
+	- restore the snapshots
+	- cmds:
+		put, get, save, restore, status.
+		
+Download the etcdctl cmd below this URL:
+	https://github.com/etcd-io/etcd/releases
+
+####################################################
+run below commands on linux
+####################################################
+ETCD_VER=v3.4.26
+
+# choose either URL
+GOOGLE_URL=https://storage.googleapis.com/etcd
+GITHUB_URL=https://github.com/etcd-io/etcd/releases/download
+DOWNLOAD_URL=${GOOGLE_URL}
+
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+rm -rf /tmp/etcd-download-test && mkdir -p /tmp/etcd-download-test
+
+curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+
+/tmp/etcd-download-test/etcd --version
+/tmp/etcd-download-test/etcdctl version
+
+mv /tmp/etcd-download-test/etcdctl  /usr/bin/
+
+etcdctl version
+####################################################
