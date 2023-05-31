@@ -123,12 +123,12 @@ EOF
 on master, 
 
 - to list all the pre-defined pods
-	# kubectl get pods -n kube-system				//list pods
-	# kubectl get pods -n kube-system -o wide		//list pods in detailed
+# kubectl get pods -n kube-system				//list pods
+# kubectl get pods -n kube-system -o wide			//list pods in detailed
 	
 - to list all the nodes
-	# kubectl get nodes
-	# kubectl get nodes -o wide
+# kubectl get nodes
+# kubectl get nodes -o wide
 	
 list of network-addons
 	flannel
@@ -212,10 +212,10 @@ sections of yaml file
 commands related to pods:
 --------------------
 listing all pods:
-	# kubectl get pods
+# kubectl get pods
 	
 listing all pods in details:
-	# kubectl get pods -o wide
+# kubectl get pods -o wide
 	
 listing nginx-pod.yaml content:
 	# vim nginx-pod.yaml
@@ -238,10 +238,10 @@ listing nginx-pod.yaml content:
 	:wq!
 	
 applying nginx config yaml file:
-	# kubectl apply -f nginx-pod.yaml
+# kubectl apply -f nginx-pod.yaml
  
 listing all pods in default namespace:
-	# kubectl get pods -n default
+# kubectl get pods -n default
 	
 Creating web-nginx
 # vim web-nginx.yaml
@@ -268,31 +268,31 @@ spec:
 	:wq!
 
 Applying another pod
-	# kubectl apply -f web-nginx.yaml 
+# kubectl apply -f web-nginx.yaml 
 
 listing all pods
-	# kubectl get pods
+# kubectl get pods
 	
 deleting specific pod from the list
-	# kubectl delete pod nginx-deployment
+# kubectl delete pod nginx-deployment
 
 listing pods now:
-	# kubectl get pods
+# kubectl get pods
 
 listing pods with details:
-	# kubectl get pods -o wide
+# kubectl get pods -o wide
 	
 listing the pod details in json format
-	# kubectl get pods  nginx-file-pod -o json
+# kubectl get pods  nginx-file-pod -o json
 
 listing the pod details in yaml format
-	# kubectl get pods  nginx-file-pod -o yaml
+# kubectl get pods  nginx-file-pod -o yaml
 	
 describing a pod
-	# kubectl describe pod nginx-file-pod 
+# kubectl describe pod nginx-file-pod 
 
 editing a pods content
-	# kubectl edit pod nginx-pod
+# kubectl edit pod nginx-pod
 	
 checking logs
-	# kubectl logs  nginx-pod
+# kubectl logs  nginx-pod
