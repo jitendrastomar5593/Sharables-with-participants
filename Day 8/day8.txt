@@ -1,0 +1,239 @@
+listing all resources
+# kubectl get all
+
+creating configmap using literal values
+# kubectl create configmap my-map --from-literal=ENV_ONE=value1 --from-literal=ENV_TWO=value2
+
+listing my-map configmap key & values
+# kubectl get configmap my-map
+# kubectl get configmap my-map -o wide
+# kubectl get configmap my-map -o yaml
+# kubectl get configmap my-map -o json
+
+
+#cat con-file1.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config-yaml
+data:
+  ENV_VAR1: "hahahahahahah" 
+  ENV_VAR2: "why so seriousssss!!!!"
+
+applying this config
+# kubectl apply -f con-file1.yaml 
+
+listing configmaps
+# kubectl get configmaps
+# kubectl get configmap env-config-yaml
+# kubectl get configmap my-map
+
+cat con-file2-ex.yaml 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-nginx-config-yaml
+data:
+  my-nginx-config.conf: |-
+    server {
+      listen 80;
+      server_name www.jeetusingh.in;
+      gzip on;
+      gzip_types text/plain application/xml;
+      location / {
+        root /usr/share/nginx/html;
+          index index.html index.htm;
+      }
+    }
+    sleep-interval: 25
+
+applying this config:
+# kubectl apply -f con-file2-ex.yaml 
+# kubectl get configmaps
+
+cat mycode.txt 
+    server {
+      listen 80;
+      server_name www.jeetusingh.in;
+      gzip on;
+      gzip_types text/plain application/xml;
+      location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+      }
+    }
+    sleep-interval: 25
+
+creating configmap using file.
+# kubectl create configmap cmd-code --from-file=/root/configmaps/mycode.txt
+# kubectl get configmaps
+# kubectl get configmaps cmd-code 
+# kubectl get configmaps cmd-code -o yaml
+
+listing configmap using environment 3 variables 
+# cat cm-env.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cm-pod-env
+spec:
+  containers:
+    - name: test-container
+      image: nginx
+      env:
+      - name: ENV_VARIABLE_1
+        valueFrom:
+          configMapKeyRef:
+            name: env-config-yaml1
+            key: ENV_ONE
+      - name: ENV_VARIABLE_2
+        valueFrom:
+          configMapKeyRef:
+            name: env-config-yaml1
+            key: ENV_TWO
+      - name: ENV_VARIABLE_3
+        valueFrom:
+          configMapKeyRef:
+            name: env-config-yaml1
+            key: ENV_THREE
+  restartPolicy: Never
+
+applying this config
+# kubectl apply -f cm-env.yaml
+
+listing the resources
+# kubectl get all
+# kubectl get pod cm-pod-env
+
+deleting the pod
+# kubectl delete pod cm-pod-env
+
+validating the environmental variables in running pod:
+# kubectl exec cm-pod-env -- env | grep ENV
+
+working on secrets
+----------------------
+# mkdir secrets
+# cd secrets/
+
+creating encrypted username & password (using base64)
+echo -n 'admin' | base64						// this displays data on terminal
+echo -n 'pass@word1' | base64					// this displays data on terminal
+echo -n 'admin' | base64 > username.txt			// this displays data on a file
+cat username.txt
+echo -n 'pass@word1' | base64 > password.txt	// this displays data on a file
+cat password.txt 
+
+creating secret for db user:
+cat db-user-pass.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-user-pass
+  namespace: default
+data:
+  username: YWRtaW4=
+  password: MWYyZDFlMmU2N2Rm
+
+applying the config
+# kubectl apply -f db-user-pass.yaml 
+
+listing the secrets
+# kubectl get secret
+# kubectl get secret db-user-pass
+# kubectl get secret db-user-pass -o yaml
+
+creating secret using generic approach using files.
+# kubectl create secret generic db-usr-pwd --from-file=./username.txt --from-file=./password.txt
+# kubectl get secret 
+# kubectl get secret db-usr-pwd -o yaml
+
+deleting the secret pods forcefully
+# kubectl delete pod secret-vol-pod secret-env-pod -force
+# kubectl delete pod secret-vol-pod secret-env-pod --force
+
+NodeSelector:
+####################################
+listing default NodeSelector
+# kubectl get nodes --show-label
+
+creating labels for worker2 node:
+# kubectl label nodes worker-2 disktype=SSD
+# kubectl get nodes --show-labels
+
+creating labels for worker1 node:
+# kubectl label nodes worker-1 disktype=HDD
+# kubectl get nodes --show-labels
+
+creating nodeSelector for the pod:
+cat nodeSelector-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeselector-pod
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    disktype: SSD
+
+applying nodeSelector config file:
+# kubectl apply -f nodeSelector-pod.yaml 
+# kubectl get nodes --show-labels
+# kubectl get pods -o wide
+
+deleting nodeSelector pod
+# kubectl delete pods nodeselector-pod --force
+
+cat memory-demo.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: memory-cpu
+spec:
+  containers:
+  - name: memory-cpu
+    image: polinux/stress
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "100Mi"
+      limits:
+        cpu: "500m"
+        memory: "200Mi"
+    command: ["stress"]
+    args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
+
+applying config
+# kubectl apply -f memory-demo.yaml 
+# kubectl get pod
+# kubectl top nodes			//this gives error.
+
+installing TOP resources for K8s.
+########################################
+
+downloading:
+curl -LO https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+editing components.yaml file:
+vim components.yaml 
+	line 133: adding,
+		hostNetwork: true
+		
+	adding line 141:
+		- --kubelet-insecure-tls
+		
+	:wq!
+
+applying the config file:
+# kubectl apply -f components.yaml
+# kubectl get pods -n kube-system
+
+listing nodes
+# kubectl top nodes
+# kubectl top pods
+

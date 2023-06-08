@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config-yaml
+data:
+  ENV_VAR1: "hahahahahahah" 
+  ENV_VAR2: "why so seriousssss!!!!"

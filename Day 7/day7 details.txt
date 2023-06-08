@@ -1,0 +1,65 @@
+ConfigMaps:
+------------
+- it stores the custom config data, outside of the pod.
+- it stores "non-sensitive data" only.
+- it does not store 
+	- certs
+	- username
+	- passwords
+	- token
+		these info are stores in regular file format, & is visible to any team.
+		
+- configmaps stores data in key:value pair.
+	key1:value1
+	key2:value2
+	...
+	
+- configmaps are used in:
+	1. environment variables.
+	2. Arguments
+	3. files in volumes
+	
+Secrets
+##########
+- it stores "sensitive data" only.
+- ex:
+	- username, pwd, certs, tokens.
+- it stores the credentials in the encrypted format (base64)
+- 2 ways:
+	1. imperative method - CMD
+	2. declarative method - FILES
+
+- types
+	1. Generic			- from local files/dir
+	2. TLS 				- certificate
+	3. Docker registry	- for docker creds
+	
+	ConfigMap									Secrets
+	------------------------------------		-----------------------------------------------
+1.	used for non-sensitive data					used for sensitive data
+2.	data field is shown in plain text format	data field is shown in encrypted format (base64)
+3.	No size limitation.							Size is limited to 1MB
+
+
+nodeSelector:
+-------------
+- selects the nodes using yaml config file manually.
+
+steps:
+	1. label the Nodes
+		# kubectl label nodes worker-2 disktype=SDD
+		# kubectl label nodes worker-1 disktype=HDD
+		
+	2. deploy a pod to specific wrk
+
+Resource (CPU & RAM) request & limit:
+--------------------------------------
+	Request
+		- minimum amt of resources required to run an app.
+		
+	Limit
+		- maximum amount of resources that an app can consume.
+
+Note: Request & Limit are applied on container-level, not on pod-level.
+
+URL for metrics-server component file: https://github.com/kubernetes-sigs/metrics-server

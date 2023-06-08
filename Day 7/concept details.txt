@@ -1,0 +1,66 @@
+Deployment
+-----------
+- 2 things are to be considerd
+	1. Scaling (up/down) of the app.
+	2. Rollout & Rollback of version.
+	
+Deployment features:
+----------------------
+1. Application deployment
+	- Rollout
+	- Pause & Resume
+	- Rollback
+2. Scaling
+	- Replica
+	- Scale up & Scale down
+	
+Deployment Strategy:
+----------------------
+1. Recreate
+	- aka dummy deployment
+	- we will shutdown all the deployment with older version (v1) & then upgrade them with new version (v2)
+	- it is simple to apply.
+	- it is good for dev, qa envs.
+	
+2. Rolling updates
+	- its the slowest strategy.
+	- also, its the default strategy.
+	
+3. Canary deployment
+	- we use this deployment to test the newer version before its rolled out.
+
+4. Blue/Green upgrade strategy
+	- we deploy same no. of new version along with old version.
+	- in case something went wrong, then its easy to rollback to older version.
+	- its very expensive as it requires double resouces.
+	
+Scaling app:
+--------------
+1. Declarative method
+	- YAML file
+	- prod-based solution
+2. Imperative method
+	- commands 
+	- Test/QA/Dev env-based solution
+	
+	
+ConfigMaps:
+------------
+- it stores the custom config data, outside of the pod.
+- it stores "non-sensitive data" only.
+- it does not store 
+	- certs
+	- username
+	- passwords
+	- token
+		these info are stores in regular file format, & is visible to any team.
+		
+- configmaps stores data in key:value pair.
+	key1:value1
+	key2:value2
+	...
+	
+- configmaps are used in:
+	1. environment variables.
+	2. Arguments
+	3. files in volumes

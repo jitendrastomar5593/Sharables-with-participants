@@ -1,0 +1,72 @@
+creating rolling updates
+-----------------------------------
+cat custom-nginx-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+spec:
+  replicas: 4
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.81
+        ports:
+        - containerPort: 80
+
+applying config in yaml
+# kubectl apply -f custom-nginx-deploy.yaml 
+
+listing pod
+# kubectl get deploy nginx-deploy -o wide
+# kubectl get deploy nginx-deploy 
+
+setting new image version (incorrect version):
+# kubectl set image deploy nginx-deploy nginx=nginx:1.91 --record
+# kubectl get pods -o wide
+# kubectl describe deploy nginx-deploy
+
+setting new image version (correct version):
+# kubectl set image deploy nginx-deploy nginx-container=nginx:1.18 --record
+
+editing deployment:
+# kubectl edit deploy nginx-deploy
+# kubectl get all
+
+deploying 3 replicas uisng commands
+# kubectl create deployment nginx-deploy --image=nginx:1.18 --replicas=3
+# kubectl get all
+# kubectl get all -o wide
+
+listing rollout history 
+# kubectl set image rollout history deploy nginx-deploy
+# kubectl rollout history deploy nginx-deploy
+
+rolling out to last known revision
+# kubectl rollout undo deployment nginx-deploy --to-revision=3
+# kubectl rollout status deploy nginx-deploy
+# kubectl get all -o wide
+
+deleting deployment image
+# kubectl delete deploy nginx-deploy --force
+
+creating configmap using literals
+# kubectl create configmap my-map --from-literal=ENV_ONE=value1 --from-literal=ENV_TWO=value2
+# kubectl get all 
+# kubectl get configmap my-map
+# kubectl get configmap my-map -o wide
+# kubectl get configmap my-map -o yaml
+# kubectl get configmap my-map -o json
