@@ -1,0 +1,146 @@
+emptyDir:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Yaml code:
+[root@kmaster storage]$  cat emptyDir.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx
+    volumeMounts:
+     - name: my-volume
+       mountPath: /my-volume
+  volumes:
+  - name: my-volume
+    emptyDir: {}
+
+
+Apply code
+# kubectl apply -f emptyDir.yaml
+
+check status
+# kubectl get all
+
+checking mount point w/o login:
+# kubectl exec my-pod -- df -h
+
+check mount point after login:
+# kc exec my-pod -it -- /bin/sh
+# df -h		//look for /my-volume mount point
+
+########################################################
+########################################################
+
+hostPath yaml code:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[root@kmaster storage]$  cat nginx-hostpath.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-hostpath
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      volumeMounts:
+      - mountPath: /test-mnt
+        name: test-vol
+  volumes:
+  - name: test-vol
+    hostPath:
+      path: /test-vol
+	  
+	  
+apply config:
+# kubectl apply -f nginx-hostpath.yaml
+
+login inside pod
+# kc exec -it nginx-hostpath -- /bin/bash
+
+check pod's mountpoint w/o login:
+# kc exec -it nginx-hostpath -- cat /test-mnt/from-pod.txt
+
+########################################################
+########################################################
+
+Persistent storage:
+~~~~~~~~~~~~~~~~~~~~~~
+Create the Pod YAML.
+-----------------------------
+# gce-pd.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gce-pd
+spec:
+  containers:
+  - image: mongo
+    name: mongodb
+    volumeMounts:
+    - name: mongodb-data
+      mountPath: /data/db 
+  volumes:
+  - name: mongodb-data
+    gcePersistentDisk:
+      pdName: my-data-disk-1
+      fsType: ext4
+
+c. Deploy.
+---------
+kubectl apply -f gce-pd.yaml
+
+
+
+***************************************************************************************************
+StorageClass (SC) Yaml code:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# cat sc.yaml 
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  reclaimPolicy: Retain
+
+***************************************************************************************************
+
+Monitoring 
+~~~~~~~~~~~~~~~
+# counter.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: one-counter-pod
+spec:
+  containers:
+  - name: counter-container
+    image: busybox
+    args: [/bin/sh, -c,
+            'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done']
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: two-counter-pod
+spec:
+  containers:
+  - name: counter-1
+    image: busybox
+    args: [/bin/sh, -c,
+            'i=0; while true; do echo "From Counter-ONE: $i: $(date)"; i=$((i+1)); sleep 1; done']
+  - name: counter-2
+    image: busybox
+    args: [/bin/sh, -c,
+            'i=0; while true; do echo "From Counter-TWO:  $i: $(date)"; i=$((i+1)); sleep 1; done']
+
+
+###############################################################################
+
